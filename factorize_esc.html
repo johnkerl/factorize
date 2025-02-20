@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- mobile-friendly -->
+</head>
+
+<body>
+
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt; &lt;!-- mobile-friendly --&gt;
+&lt;/head&gt;
+
+&lt;!--
+  John Kerl 2015-01-02 with content put together from various google searches. First AJAX program.
+--&gt;
+&lt;!--
+&lt;body OnLoad="document.myarea.focus();"&gt;
+&lt;body OnLoad="document.n.focus();"&gt;
+--&gt;
+&lt;body&gt;
+
+&lt;div id="myarea"&gt;
+&lt;script&gt;
+    //document.getElementById("n").focus();
+    window.onload = function() {
+        document.getElementById("myText").focus();
+    };
+
+    var oReq = null;
+    function submit() {
+        var nElement = document.getElementById("n");
+        var n = nElement.value;
+        //alert("n="+797);
+        //alert("n="+n);
+        oReq = new XMLHttpRequest(); //New request object
+
+        var url = "factorize_inner_raw.php?n="+n;
+        console.log("url="+url);
+        oReq.open("POST", url, false); // 3rd arg == false: blocking
+        //oReq.send();
+        oReq.onreadystatechange = OnStateChange;
+        //oReq.send(null);
+        oReq.send();
+    }
+    function reqListener () {
+      console.log(this.responseText);
+    }
+
+    function OnStateChange () {
+        if (oReq != null) {
+            if (oReq.readyState == 4) {
+                var para = document.createElement("p");
+                var node = null;
+                if (IsRequestSuccessful (oReq)) {
+                    node = document.createTextNode(this.responseText);
+                }
+                else {
+                    //alert ("Operation failed.");
+                    node = document.createTextNode("Operation failed.");
+                }
+                para.appendChild(node);
+                var element = document.getElementById("myarea");
+                element.appendChild(para);
+            }
+        }
+    }
+    // returns whether the HTTP request was successful
+    function IsRequestSuccessful(httpRequest) {
+        // IE: sometimes 1223 instead of 204
+        var success = (httpRequest.status == 0 || 
+            (httpRequest.status &gt;= 200 &amp;&amp; httpRequest.status &lt; 300) || 
+            httpRequest.status == 304 || httpRequest.status == 1223);
+        return success;
+    }
+
+    function checkEnter(e){ //e is event object passed from function invocation
+        var characterCode
+
+        if (e &amp;&amp; e.which) { // if 'which' property of event object is supported (NN4)
+            e = e
+            characterCode = e.which
+        }
+        else {
+            e = event
+            characterCode = e.keyCode
+        }
+
+        if (characterCode == 13) { //if generated character code is equal to ascii 13 (if enter key)
+            submit()
+            return false 
+        }
+        else {
+            return true 
+        }
+    }
+&lt;/script&gt;
+
+Integer:
+&lt;input id="n" type="text" name="n" onKeyPress="checkEnter(event)"/&gt;
+&lt;button onclick="submit();" href="javascript:;"&gt;Submit&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</body>
+</html>
